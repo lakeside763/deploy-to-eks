@@ -1,16 +1,13 @@
-# Base image with essential tools for building, pushing, and deploying
-FROM docker:latest
+FROM python:3.8-alpine
 
-# Labels for GitHub Actions metadata
-LABEL "com.github.actions.name"="Build and Deploy"
-LABEL "com.github.actions.description"="Builds, tags, and deploys Docker images to ECR, and updates EKS deployment with Helm."
-LABEL "com.github.actions.icon"="package"
-LABEL "com.github.actions.color"="green"
+RUN apk --no-cache add git curl docker-cli openssl \
+    && pip3 install --upgrade pip \
+    && pip3 install --no-cache-dir awscli \
+    && curl -Ls -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl \
+    && chmod +x /usr/bin/kubectl \
+    && curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | sh
 
-LABEL "repository"="https://github.com/lakeside763/bookstore-inventory-api"
-LABEL "homepage"="https://github.com/lakeside763/bookstore-inventory-api/actions"
-
-COPY entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
