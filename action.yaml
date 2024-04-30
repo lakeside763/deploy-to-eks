@@ -13,6 +13,9 @@ inputs:
   eks-cluster-name:
     description: Name of the EKS cluster
     required: true
+  app-name:
+    description: The name of the app name specified by helm chart
+    required: true
   helm-chart-path:
     description: Path to the Helm chart for deployment
     required: true
@@ -23,7 +26,7 @@ inputs:
     description: Name of the ECR repository for the Docker image
     required: true
   image-tag:
-    description: Name of the ECR repository for the Docker image
+    description: The version tag for the newly built image
     required: true
 
 runs:
@@ -31,10 +34,11 @@ runs:
   image: Dockerfile
   env:
     AWS_REGION: ${{ inputs.aws-region }}
-    AWS_ACCESS_KEY_ID : ${{ inputs.aws-access-key-id }}
-    AWS_SECRET_ACCESS_KEY : ${{ inputs.aws-secret-access-key }}
+    AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
+    AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
     EKS_CLUSTER_NAME: ${{ inputs.eks-cluster-name }}
-    HELM_CHART_PATH: ${{ inputs.elm-chart-path }}
+    HELM_CHART_PATH: ${{ inputs.helm-chart-path }}
+    APP_NAME: ${{ inputs.app-name }}
     ECR_REGISTRY: ${{ inputs.ecr-registry }}
     ECR_REPOSITORY: ${{ inputs.ecr-repository }}
     IMAGE_TAG: ${{ inputs.image-tag }}
